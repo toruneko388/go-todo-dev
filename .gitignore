@@ -1,0 +1,42 @@
+# Java
+*.class
+*.jar
+*.war
+
+# Maven
+target/
+.idea/
+*.iml
+*.log
+
+# VS Code
+#.vscode/
+
+# OS
+.DS_Store
+
+# Docker
+**/.dockerignore
+
+# Eclipse
+*.project
+*.classpath
+.settings/
+
+# Other
+*.swp
+
+# environment variables
+.env
+
+# SSL/TLS certificates
+*.crt
+*.key
+*.pem
+*.p12
+*.jks
+*.csr
+*.srl
+
+# Go
+app/tmp

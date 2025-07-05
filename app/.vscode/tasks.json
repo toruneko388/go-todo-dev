@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",      // ← VS Code タスク設定のバージョン（基本はこれ固定）
+  "tasks": [
+    {
+      "label": "Go: Air",  // ← タスクの表示名（UIやコマンドパレットで表示される）
+      "type": "shell",     // ← シェルコマンドを実行するタイプのタスク
+      "command": "air",    // ← 実行するコマンド。ここで `air` を起動！
+      "args": ["-c", ".air.toml"],    
+
+      "isBackground": true,      // ← バックグラウンド実行扱い（VSCodeが「完了」しない想定）
+      "problemMatcher": [],      // ← エラー検出ルール（Goでは特に不要なので空にしてOK）
+
+      "options": {
+        "cwd": "${workspaceFolder}"   // ← コマンドの作業ディレクトリ（Goプロジェクト直下）
+      },
+      
+      "runOptions": {
+        "runOn": "folderOpen"   // ← VS Code を開いたときに自動で実行される（任意）
+      }
+    }
+  ]
+}
