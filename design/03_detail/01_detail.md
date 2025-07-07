@@ -1,89 +1,62 @@
-# 🛠️ 詳細設計（Todoアプリ・初期版）
+# 詳細設計（実装依頼用）
+## ✅ 概要
 
----
+- ユーザーがTodoを1つ追加できる
+- 追加されたTodoは一覧に表示される
+- データはメモリに保持（[]Todo スライス）
+- Webブラウザ上でフォーム入力・一覧表示ができる
+  - アプリは `http://localhost:8080` でアクセス
 
-## 1. モジュール構成（ファイル単位）
+## 構造体
+`Todo` 構造体 ： `ID (int), Title (string)` がある
 
-| ファイル名        | 役割                       |
-|-------------------|----------------------------|
-| `main.go`         | 全体のエントリポイント（起動処理・ルーティング定義） |
-| `handler.go`      | HTTPハンドラ群（一覧表示・追加処理）     |
-| `model.go`        | Todo構造体およびデータ保持               |
-| `templates/`      | HTMLテンプレート格納ディレクトリ         |
 
----
+## 💾 データ保持方法
+- `[]Todo` スライス：グローバル変数として定義
+- IDは自動で連番を振ってもらえるとよい（方法は任せる）
 
-## 2. データ構造（構造体定義）
+## ✳️ 追加機能
+### 機能：Todoを一覧表示する
 
-```go
-// model.go
-type Todo struct {
-    ID    int    // 自動採番（連番）
-    Title string // 1〜100文字
-    Done  bool   // 初期値はfalse
-}
+- get /todos
+- やりたいこと：
+  1. []Todo から現在のTodo一覧を取得
+  2. 一覧を表示
 
-var todos []Todo      // メモリ保持
-var nextID int = 1    // 自動採番用
-```
+### 機能：Todoを追加する
 
----
+- post /todos
+- 入力：フォームから取得
+- やりたいこと：
+  1. フォームから文字列を受け取る
+  2. 空欄でなければ新しいTodo構造体を作成
+  3. []Todo スライスに append
+  4. `/todos` にリダイレクト
 
-## 3. ルーティングと処理
 
-| メソッド | パス     | 関数名         | 処理概要                                |
-|----------|----------|----------------|-----------------------------------------|
-| `GET`    | `/todos` | `handleList`   | Todo一覧を取得しテンプレート表示        |
-| `POST`   | `/todos` | `handleAdd`    | フォームからタイトルを受け取り、Todo追加 |
+## 🖼️ テンプレート要件（`index.html`）
 
----
+- タイトルを入力するテキストフィールド
+- 送信するフォームボタン
+-  `[]Todo` スライスをテンプレートに渡してTodo一覧を表示
+- テンプレートエンジン：Go標準の `html/template` を想定
 
-## 4. 処理フロー
+## ディレクトリ構成
+ルートディレクトリ app 以下に、Goの標準的な構成に沿って以下の役割ごとにディレクトリを分けてください：
+エントリーポイント：cmd/server/
+データ構造：internal/models/
+ハンドラ処理：internal/handlers/
+テンプレート：templates/
 
-### 🟩 Todo一覧表示（GET /todos）
+## 使用パッケージ
+import (
+	"fmt"
+	"net/http"
 
-```text
-1. `handleList` が呼ばれる
-2. `todos` スライスの内容を取得
-3. `templates/todos.html` に渡してHTMLレンダリング
-4. ブラウザに返す
-```
+	"github.com/go-chi/chi/v5"
+)
+- 使用言語：Go（Golang）
+- 使用パッケージ：net/http, html/template
+- モジュール名：`todoapp`
+- ビルドや実行に必要なGoモジュール定義は自動生成でOK
 
----
-
-### 🟦 Todo追加（POST /todos）
-
-```text
-1. `handleAdd` が呼ばれる
-2. フォーム値 `title` を取得
-3. 空欄チェック・文字数制限
-4. 新しい `Todo{ID: nextID, Title: title, Done: false}` を作成
-5. `todos` に追加し、`nextID++`
-6. `/todos` にリダイレクト
-```
-
----
-
-## 5. テンプレートの設計（todos.html）
-
-```html
-<h1>Todo List</h1>
-<ul>
-  {{range .Todos}}
-    <li>{{.Title}}</li>
-  {{end}}
-</ul>
-
-<form method="POST" action="/todos">
-  <input type="text" name="title" maxlength="100" required>
-  <button type="submit">Add</button>
-</form>
-```
-
----
-
-## 6. バリデーション仕様（POST）
-
-- `title` は必須（空欄不可）
-- 最大100文字（それ以上はエラー）
-- エラー時は一覧画面上部に赤字で表示

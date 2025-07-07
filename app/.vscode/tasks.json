@@ -11,7 +11,7 @@
       "problemMatcher": [],      // ← エラー検出ルール（Goでは特に不要なので空にしてOK）
 
       "options": {
-        "cwd": "${workspaceFolder}"   // ← コマンドの作業ディレクトリ（Goプロジェクト直下）
+        "cwd": "${workspaceFolder}"   // air コマンドが実行されるときの作業ディレクトリ
       },
       
       "runOptions": {

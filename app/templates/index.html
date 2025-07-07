@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <title>Todo List</title>
+  <style>
+    body { font-family: sans-serif; max-width: 640px; margin: 2rem auto; }
+    form { margin-bottom: 1.5rem; }
+    ul  { padding-left: 1.2rem; }
+  </style>
+</head>
+<body>
+  <h1>Todo List</h1>
+
+  <form action="/todos" method="POST">
+    <input type="text" name="title" placeholder="やることを入力" size="30" autofocus />
+    <button type="submit">追加</button>
+  </form>
+
+  <ul>
+    {{range .}}
+      <li><strong>{{.ID}}</strong> — {{.Title}}</li>
+    {{else}}
+      <li>まだ Todo はありません</li>
+    {{end}}
+  </ul>
+</body>
+</html>
