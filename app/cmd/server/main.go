@@ -4,13 +4,21 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
-
 	"todoapp/internal/handlers"
+	"todoapp/internal/models"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
+	// --- DB 初期化
+	models.InitDB("todo.db")
+
 	r := chi.NewRouter()
+
+	// リクエストログ
+	r.Use(middleware.Logger)
 
 	h := handlers.NewTodoHandler()
 

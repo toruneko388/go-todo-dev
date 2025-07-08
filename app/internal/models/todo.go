@@ -1,26 +1,38 @@
 package models
 
-// Todo は 1 件のタスクを表す
+import "time"
+
+// Todo は 1 レコードを表す
 type Todo struct {
-	ID    int
-	Title string
+	ID        int
+	Title     string
+	CreatedAt time.Time
 }
 
-var (
-	todos  []Todo // メモリ上に保持
-	nextID int    // ID 自動採番用
-)
+// GetAllTodos は todos テーブルを SELECT して一覧を返す
+func GetAllTodos() ([]Todo, error) {
+	rows, err := DB.Query(`
+		SELECT id, title, created_at
+		FROM todos
+		ORDER BY id DESC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-// GetAll は現在の Todo 一覧を返す
-func GetAll() []Todo {
-	return todos
+	var todos []Todo
+	for rows.Next() {
+		var t Todo
+		if err := rows.Scan(&t.ID, &t.Title, &t.CreatedAt); err != nil {
+			return nil, err
+		}
+		todos = append(todos, t)
+	}
+	return todos, rows.Err()
 }
 
-// Add はタイトルを受け取り、新しい Todo を追加する
-func Add(title string) {
-	nextID++
-	todos = append(todos, Todo{
-		ID:    nextID,
-		Title: title,
-	})
+// InsertTodo は 1 件 INSERT する
+func InsertTodo(title string) error {
+	_, err := DB.Exec(`INSERT INTO todos(title) VALUES(?)`, title)
+	return err
 }
