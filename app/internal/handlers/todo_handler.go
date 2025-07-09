@@ -4,7 +4,8 @@ import (
 	"html/template"
 	"net/http"
 
-	"todoapp/internal/models"
+	"github.com/toruneko388/todoapp/internal/database"
+	"github.com/toruneko388/todoapp/internal/models"
 )
 
 type TodoHandler struct {
@@ -19,7 +20,7 @@ func NewTodoHandler() *TodoHandler {
 
 // ListTodos : GET /todos
 func (h *TodoHandler) ListTodos(w http.ResponseWriter, r *http.Request) {
-	todos, err := models.GetAllTodos()
+	todos, err := models.GetAllTodos(database.GetDB())
 	if err != nil {
 		http.Error(w, "failed to fetch todos: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -40,7 +41,7 @@ func (h *TodoHandler) AddTodo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "title is required", http.StatusBadRequest)
 		return
 	}
-	if err := models.InsertTodo(title); err != nil {
+	if err := models.InsertTodo(database.GetDB(), title); err != nil {
 		http.Error(w, "insert failed: "+err.Error(), http.StatusInternalServerError)
 		return
 	}

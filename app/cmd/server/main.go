@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"todoapp/internal/handlers"
-	"todoapp/internal/models"
+	"github.com/toruneko388/todoapp/internal/database"
+	"github.com/toruneko388/todoapp/internal/handlers"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -13,7 +13,7 @@ import (
 
 func main() {
 	// --- DB 初期化
-	models.InitDB("todo.db")
+	database.InitDB("todo.db")
 
 	r := chi.NewRouter()
 

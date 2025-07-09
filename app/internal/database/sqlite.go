@@ -1,4 +1,4 @@
-package models
+package database
 
 import (
 	"database/sql"
@@ -24,7 +24,7 @@ func InitDB(path string) {
 	if err != nil {
 		log.Fatalf("open database: %v", err)
 	}
-	if err = DB.Ping(); err != nil {
+	if err = DB.Ping(); err != nil { // Ping は DB 接続が有効か確認する
 		log.Fatalf("ping database: %v", err)
 	}
 
@@ -34,7 +34,14 @@ func InitDB(path string) {
 		title       TEXT    NOT NULL,
 		created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);`
-	if _, err := DB.Exec(createTable); err != nil {
+	if _, err := DB.Exec(createTable); err != nil { // _は最初の戻り値を捨てる
 		log.Fatalf("create table: %v", err)
 	}
+}
+
+func GetDB() *sql.DB {
+	if DB == nil {
+		log.Fatal("database not initialized")
+	}
+	return DB
 }

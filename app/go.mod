@@ -1,4 +1,4 @@
-module todoapp
+module github.com/toruneko388/todoapp
 
 go 1.24.4
 
