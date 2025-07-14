@@ -26,6 +26,10 @@
 | title        | TEXT       | NOT NULL   | Todoのタイトル           |
 | created_at   | DATETIME   | NOT NULL   | 作成日時（アプリで設定）|
 
+### データ保持領域
+data/todo.db で管理
+将来的にボリュームで管理する予定
+
 # 今後の追加予定
 03 削除／完了の基本CRUD
 04 ユーザーとセッションの導入

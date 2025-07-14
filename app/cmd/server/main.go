@@ -13,7 +13,9 @@ import (
 
 func main() {
 	// --- DB 初期化
-	database.InitDB("todo.db")
+	dbPath := database.GetDBPath() // データベースのパスを取得
+	log.Println("DB Path:", dbPath)
+	database.InitDB(dbPath)
 
 	r := chi.NewRouter()
 

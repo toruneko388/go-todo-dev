@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"log"
+	"path/filepath"
 
 	// アンダースコアで始まるインポートは、パッケージの初期化関数のみを呼び出し、
 	// 他の関数は直接使用しないことを示します。
@@ -44,4 +45,9 @@ func GetDB() *sql.DB {
 		log.Fatal("database not initialized")
 	}
 	return DB
+}
+
+// GetDBPath はdataディレクトリ下のパスを返す
+func GetDBPath() string {
+	return filepath.Join("data", "todo.db")
 }
