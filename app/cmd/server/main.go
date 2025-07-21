@@ -6,23 +6,29 @@ import (
 
 	"github.com/toruneko388/todoapp/internal/database"
 	"github.com/toruneko388/todoapp/internal/handlers"
-	"github.com/toruneko388/todoapp/repository"
+	"github.com/toruneko388/todoapp/internal/repository"
+	"github.com/toruneko388/todoapp/internal/service"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
-	// 1. データベースの初期化
 	db := database.InitDB(database.GetDBPath())
+	defer db.Close()
 
-	// 2. 依存関係の注入 (Dependency Injection)
-	// リポジトリを初期化し、データベース接続を渡す
-	todoRepo := repository.NewTodoRepository(db)
-	// ハンドラを初期化し、リポジトリを渡す
-	todoHandler := handlers.NewTodoHandler(todoRepo)
+	// 1. リポジトリのインスタンスを作成
+	todoRepo := repository.NewSQLiteTodoRepository(db)
 
-	// 3. ルーティングの設定
+	// 2. サービスレイヤーのインスタンスを作成
+	//    リポジトリをサービスに注入する
+	todoService := service.NewTodoService(todoRepo)
+
+	// 3. ハンドラのインスタンスを作成 (注入するものを変更)
+	//    サービスをハンドラに注入する
+	todoHandler := handlers.NewTodoHandler(todoService)
+
+	// ルーティングの設定
 	r := chi.NewRouter()
 
 	// リクエストログ

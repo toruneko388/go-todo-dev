@@ -2,7 +2,7 @@
 namespace handlers {
     class TodoHandler << (S,Aquamarine) >> {
         + Tmpl *template.Template
-        + Repo repository.TodoRepository
+        + Service service.TodoService
 
         + ListTodos(w http.ResponseWriter, r *http.Request) 
         + AddTodo(w http.ResponseWriter, r *http.Request) 
@@ -37,5 +37,22 @@ namespace repository {
 }
 
 "repository.TodoRepository" <|-- "repository.SQLiteRepository"
+
+namespace service {
+    interface TodoService  {
+        + GetAll() ([]models.Todo, error)
+        + Create(title string) error
+
+    }
+    class todoService << (S,Aquamarine) >> {
+        - repo repository.TodoRepository
+
+        + GetAll() ([]models.Todo, error)
+        + Create(title string) error
+
+    }
+}
+
+"service.TodoService" <|-- "service.todoService"
 
 @enduml

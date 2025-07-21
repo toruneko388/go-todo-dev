@@ -22,7 +22,7 @@ type SQLiteRepository struct {
 
 // NewTodoRepository は新しいSQLiteRepositoryのインスタンスを生成します。
 // main.goで生成されたデータベース接続を受け取ります。
-func NewTodoRepository(db *sql.DB) *SQLiteRepository {
+func NewSQLiteTodoRepository(db *sql.DB) *SQLiteRepository {
 	return &SQLiteRepository{DB: db}
 }
 

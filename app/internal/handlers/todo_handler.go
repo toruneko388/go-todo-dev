@@ -5,28 +5,28 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/toruneko388/todoapp/repository"
+	"github.com/toruneko388/todoapp/internal/service"
 )
 
 // TodoHandler はTodo関連のHTTPリクエストを処理します。
 // テンプレートとリポジトリを保持します。
 type TodoHandler struct {
-	Tmpl *template.Template
-	Repo repository.TodoRepository // 具体的な実装ではなくインターフェースに依存
+	Tmpl    *template.Template
+	Service service.TodoService // 具体的な実装ではなくインターフェースに依存
 }
 
 // テンプレートをパースして返す
-func NewTodoHandler(repo repository.TodoRepository) *TodoHandler {
+func NewTodoHandler(svc service.TodoService) *TodoHandler {
 	tmpl := template.Must(template.ParseGlob("templates/*.html"))
 	return &TodoHandler{
-		Tmpl: tmpl,
-		Repo: repo,
+		Tmpl:    tmpl,
+		Service: svc,
 	}
 }
 
 // ListTodos : GET /todos
 func (h *TodoHandler) ListTodos(w http.ResponseWriter, r *http.Request) {
-	todos, err := h.Repo.GetAll()
+	todos, err := h.Service.GetAll()
 	if err != nil {
 		log.Printf("Todoの取得に失敗しました: %v", err)
 		http.Error(w, "failed to fetch todos: "+err.Error(), http.StatusInternalServerError)
@@ -50,12 +50,9 @@ func (h *TodoHandler) AddTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	title := r.FormValue("title")
-	if title == "" {
-		log.Println("タイトルが空です")
-		http.Error(w, "title is required", http.StatusBadRequest)
-		return
-	}
-	if err := h.Repo.Insert(title); err != nil {
+
+	// バリデーションロジックはServiceレイヤーに移動したため、ここでは単純に呼び出すだけ
+	if err := h.Service.Create(title); err != nil {
 		log.Printf("Todoの追加に失敗しました: %v", err)
 		http.Error(w, "insert failed: "+err.Error(), http.StatusInternalServerError)
 		return
