@@ -2,46 +2,61 @@ package handlers
 
 import (
 	"html/template"
+	"log"
 	"net/http"
 
-	"github.com/toruneko388/todoapp/internal/database"
-	"github.com/toruneko388/todoapp/internal/models"
+	"github.com/toruneko388/todoapp/repository"
 )
 
+// TodoHandler はTodo関連のHTTPリクエストを処理します。
+// テンプレートとリポジトリを保持します。
 type TodoHandler struct {
-	tmpl *template.Template
+	Tmpl *template.Template
+	Repo repository.TodoRepository // 具体的な実装ではなくインターフェースに依存
 }
 
-// NewTodoHandler はテンプレートをパースして返す
-func NewTodoHandler() *TodoHandler {
-	tmpl := template.Must(template.ParseFiles("templates/index.html"))
-	return &TodoHandler{tmpl: tmpl}
+// テンプレートをパースして返す
+func NewTodoHandler(repo repository.TodoRepository) *TodoHandler {
+	tmpl := template.Must(template.ParseGlob("templates/*.html"))
+	return &TodoHandler{
+		Tmpl: tmpl,
+		Repo: repo,
+	}
 }
 
 // ListTodos : GET /todos
 func (h *TodoHandler) ListTodos(w http.ResponseWriter, r *http.Request) {
-	todos, err := models.GetAllTodos(database.GetDB())
+	todos, err := h.Repo.GetAll()
 	if err != nil {
+		log.Printf("Todoの取得に失敗しました: %v", err)
 		http.Error(w, "failed to fetch todos: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if err := h.tmpl.Execute(w, todos); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	// テンプレートにデータを渡して実行
+	err = h.Tmpl.ExecuteTemplate(w, "index.html", map[string]interface{}{
+		"Todos": todos,
+	})
+	if err != nil {
+		log.Printf("テンプレートの実行に失敗しました: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
 
 // AddTodo : POST /todos
 func (h *TodoHandler) AddTodo(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
+		log.Printf("フォームの解析に失敗しました: %v", err)
 		http.Error(w, "invalid form", http.StatusBadRequest)
 		return
 	}
 	title := r.FormValue("title")
 	if title == "" {
+		log.Println("タイトルが空です")
 		http.Error(w, "title is required", http.StatusBadRequest)
 		return
 	}
-	if err := models.InsertTodo(database.GetDB(), title); err != nil {
+	if err := h.Repo.Insert(title); err != nil {
+		log.Printf("Todoの追加に失敗しました: %v", err)
 		http.Error(w, "insert failed: "+err.Error(), http.StatusInternalServerError)
 		return
 	}

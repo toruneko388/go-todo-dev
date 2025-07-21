@@ -2,7 +2,9 @@ FROM golang:1.24-alpine AS builder
 WORKDIR /app
 
 RUN go install github.com/air-verse/air@latest && \
-    go install github.com/go-delve/delve/cmd/dlv@latest
+    go install github.com/go-delve/delve/cmd/dlv@latest && \
+    go install github.com/jfeliu007/goplantuml/cmd/goplantuml@latest && \
+    go install github.com/kisielk/godepgraph@latest
 
 # Go モジュールのキャッシュを有効にするための設定
 # --mount=type=cache,target=/go/pkg/mod : Go モジュールのキャッシュを /go/pkg/mod に保存します（Go の公式イメージではモジュールキャッシュのデフォルト場所が /go/pkg/mod）

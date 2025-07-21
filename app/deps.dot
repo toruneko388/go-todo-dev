@@ -1,0 +1,17 @@
+digraph godep {
+splines=ortho
+nodesep=0.4
+ranksep=0.8
+node [shape="box",style="rounded,filled"]
+edge [arrowsize="0.5"]
+"github.com/toruneko388/todoapp/cmd/server" [label="github.com/toruneko388/todoapp/cmd/server" color="paleturquoise" URL="https://godoc.org/github.com/toruneko388/todoapp/cmd/server" target="_blank"];
+"github.com/toruneko388/todoapp/cmd/server" -> "github.com/toruneko388/todoapp/internal/database";
+"github.com/toruneko388/todoapp/cmd/server" -> "github.com/toruneko388/todoapp/internal/handlers";
+"github.com/toruneko388/todoapp/cmd/server" -> "github.com/toruneko388/todoapp/repository";
+"github.com/toruneko388/todoapp/internal/database" [label="github.com/toruneko388/todoapp/internal/database" color="paleturquoise" URL="https://godoc.org/github.com/toruneko388/todoapp/internal/database" target="_blank"];
+"github.com/toruneko388/todoapp/internal/handlers" [label="github.com/toruneko388/todoapp/internal/handlers" color="paleturquoise" URL="https://godoc.org/github.com/toruneko388/todoapp/internal/handlers" target="_blank"];
+"github.com/toruneko388/todoapp/internal/handlers" -> "github.com/toruneko388/todoapp/repository";
+"github.com/toruneko388/todoapp/internal/models" [label="github.com/toruneko388/todoapp/internal/models" color="paleturquoise" URL="https://godoc.org/github.com/toruneko388/todoapp/internal/models" target="_blank"];
+"github.com/toruneko388/todoapp/repository" [label="github.com/toruneko388/todoapp/repository" color="paleturquoise" URL="https://godoc.org/github.com/toruneko388/todoapp/repository" target="_blank"];
+"github.com/toruneko388/todoapp/repository" -> "github.com/toruneko388/todoapp/internal/models";
+}

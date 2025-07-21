@@ -1,0 +1,41 @@
+@startuml
+namespace handlers {
+    class TodoHandler << (S,Aquamarine) >> {
+        + Tmpl *template.Template
+        + Repo repository.TodoRepository
+
+        + ListTodos(w http.ResponseWriter, r *http.Request) 
+        + AddTodo(w http.ResponseWriter, r *http.Request) 
+
+    }
+}
+
+
+namespace models {
+    class Todo << (S,Aquamarine) >> {
+        + ID int
+        + Title string
+        + CreatedAt time.Time
+
+    }
+}
+
+
+namespace repository {
+    class SQLiteRepository << (S,Aquamarine) >> {
+        + DB *sql.DB
+
+        + GetAll() ([]models.Todo, error)
+        + Insert(title string) error
+
+    }
+    interface TodoRepository  {
+        + GetAll() ([]models.Todo, error)
+        + Insert(title string) error
+
+    }
+}
+
+"repository.TodoRepository" <|-- "repository.SQLiteRepository"
+
+@enduml

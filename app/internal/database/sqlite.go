@@ -14,19 +14,15 @@ import (
 	// sql.Open("sqlite3", path) として使用する
 )
 
-// DB はパッケージ全体で共有する *sql.DB インスタンス
-var DB *sql.DB
-
 // InitDB はアプリ起動時に呼び出して DB を初期化・マイグレーションする
-func InitDB(path string) {
-	var err error
-	//DB, err = sql.Open("sqlite3", path)
-	DB, err = sql.Open("sqlite", path)
+func InitDB(path string) *sql.DB {
+	//db, err := sql.Open("sqlite3", path)
+	db, err := sql.Open("sqlite", path)
 	if err != nil {
-		log.Fatalf("open database: %v", err)
+		log.Fatalf("データベースへの接続に失敗しました: %v", err)
 	}
-	if err = DB.Ping(); err != nil { // Ping は DB 接続が有効か確認する
-		log.Fatalf("ping database: %v", err)
+	if err = db.Ping(); err != nil { // Ping は DB 接続が有効か確認する
+		log.Fatalf("データベースへのPingに失敗しました: %v", err)
 	}
 
 	const createTable = `
@@ -35,16 +31,12 @@ func InitDB(path string) {
 		title       TEXT    NOT NULL,
 		created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);`
-	if _, err := DB.Exec(createTable); err != nil { // _は最初の戻り値を捨てる
-		log.Fatalf("create table: %v", err)
+	if _, err := db.Exec(createTable); err != nil { // _は最初の戻り値を捨てる
+		log.Fatalf("テーブルの作成に失敗しました: %v", err)
 	}
-}
 
-func GetDB() *sql.DB {
-	if DB == nil {
-		log.Fatal("database not initialized")
-	}
-	return DB
+	log.Println("データベースの準備が完了し、todosテーブルが利用可能です。")
+	return db
 }
 
 // GetDBPath はdataディレクトリ下のパスを返す
